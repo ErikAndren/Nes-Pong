@@ -101,8 +101,6 @@ LoadPalettesLoop:
                         ; if compare was equal to 32, keep going down
 
 
-  
-
 
 ;;;Set some initial ball stats
   LDA #$01
@@ -314,7 +312,7 @@ UpdateSprites:
   LDA bally  ;;update all ball sprite info
   STA $0200
   
-  LDA #$30
+  LDA #$75
   STA $0201
   
   LDA #$00
