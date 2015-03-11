@@ -382,6 +382,7 @@ UpdateSprites:
 .DrawPaddlePart
   TXA
   CLC
+  ;; Shift X two bits to the left
   ASL A
   ASL A
   TAX
