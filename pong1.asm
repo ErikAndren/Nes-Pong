@@ -290,13 +290,15 @@ MovePaddleUp:
   ;;if up button pressed
   LDA buttons1
   AND #%00001000
-  BEQ MovePaddleUpDone
+  BEQ MovePaddleUpDone ;; not pressed, skip
 
-  DEC paddle1ytop
-  
-  ;;  if paddle top > top wall
-  ;;    move paddle top and bottom up
-  
+  LDA paddle1ytop 
+  CMP #TOPWALL ;; Check if we have hit top wall
+
+  BCC MovePaddleUpDone ;; If so, skip
+
+  DEC paddle1ytop ;; Decrement position
+    
 MovePaddleUpDone:
 
 MovePaddleDown:
