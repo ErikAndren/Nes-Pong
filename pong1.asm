@@ -117,7 +117,7 @@ LoadPalettesLoop:
   LDA #$80
   STA ballx
   
-  LDA #$02
+  LDA #$01
   STA ballspeedx
   STA ballspeedy
 
@@ -139,8 +139,6 @@ LoadPalettesLoop:
 Forever:
   JMP Forever     ;jump back to Forever, infinite loop, waiting for NMI
   
- 
-
 NMI:
   LDA #$00
   STA $2003       ; set the low byte (00) of the RAM address
@@ -159,8 +157,6 @@ NMI:
   STA $2005
     
   ;;;all graphics updates done by here, run game engine
-
-
   JSR ReadController1  ;;get the current button data for player 1
   JSR ReadController2  ;;get the current button data for player 2
   
@@ -181,9 +177,6 @@ GameEngineDone:
   JSR UpdateSprites  ;;set ball/paddle sprites from positions
 
   RTI             ; return from interrupt
- 
- 
- 
  
 ;;;;;;;;
  
@@ -229,7 +222,6 @@ MoveBallRight:
   ;;in real game, give point to player 1, reset ball
 MoveBallRightDone:
 
-
 MoveBallLeft:
   LDA ballleft
   BEQ MoveBallLeftDone   ;;if ballleft=0, skip this section
@@ -249,7 +241,6 @@ MoveBallLeft:
   ;;in real game, give point to player 2, reset ball
 MoveBallLeftDone:
 
-
 MoveBallUp:
   LDA ballup
   BEQ MoveBallUpDone   ;;if ballup=0, skip this section
@@ -267,7 +258,6 @@ MoveBallUp:
   LDA #$00
   STA ballup         ;;bounce, ball now moving down
 MoveBallUpDone:
-
 
 MoveBallDown:
   LDA balldown
@@ -322,13 +312,11 @@ CheckPaddleCollision:
   ;;  if ball y > paddle y top
   ;;    if ball y < paddle y bottom
   ;;      bounce, ball now moving left
+  
 CheckPaddleCollisionDone:
 
   JMP GameEngineDone
- 
- 
- 
- 
+  
 UpdateSprites:
   LDA bally  ;;update all ball sprite info
   STA $0200
