@@ -309,29 +309,33 @@ CheckPaddleCollision:
   ;;    if ball y < paddle y bottom
   ;;      bounce, ball now moving left
 
+  ;; Check if on paddle x position
   LDA ballx
   CMP #LEFTWALLOFFS
   BCS CheckPaddleCollisionDone
 
+  ;; Check if ball is above paddle
   LDA bally
   CMP paddle1ytop
   BCC CheckPaddleCollisionDone
 
+  ;; Check if ball is below paddle
   LDA paddle1ytop
   ADC #PADDLE_LEN
   CMP bally
   BCC CheckPaddleCollisionDone
 
+  ;; Bounce, ball now moving right
   LDA #$01
   STA ballright
   LDA #$00
-  STA ballleft         ;;bounce, ball now moving right
+  STA ballleft         
 CheckPaddleCollisionDone:
 
   JMP GameEngineDone
   
 UpdateSprites:
-  LDA bally  ;;update all ball sprite info
+  LDA bally  ;; update all ball sprite info
   STA $0200
   
   LDA #$75
