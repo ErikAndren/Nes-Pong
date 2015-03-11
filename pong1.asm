@@ -290,6 +290,10 @@ MovePaddleUp:
   ;;if up button pressed
   ;;  if paddle top > top wall
   ;;    move paddle top and bottom up
+  
+    
+
+
 MovePaddleUpDone:
 
 MovePaddleDown:
@@ -329,6 +333,7 @@ UpdateSprites:
   
 .DrawPaddlePart
   TXA
+  CLC
   ASL A
   ASL A
   TAX
@@ -346,6 +351,7 @@ UpdateSprites:
   STA $0207, x
 
   TXA
+  CLC
   ROR A
   ROR A
   TAX
