@@ -120,12 +120,14 @@ LoadPalettesLoop:
   STA ballspeedx
   STA ballspeedy
 
-
+;;; Set initial paddle state
+  LDA #$80
+  STA paddle1ytop
+  STA paddle2ybot
+  	
 ;;:Set starting game state
   LDA #STATEPLAYING
   STA gamestate
-
-
               
   LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
   STA $2000
@@ -322,6 +324,18 @@ UpdateSprites:
   STA $0203
   
   ;;update paddle sprites
+  LDA paddle1ytop  ;;update all ball sprite info
+  STA $0204
+  
+  LDA #$86
+  STA $0205
+  
+  LDA #$02
+  STA $0206
+   
+  LDA PADDLE1X
+  STA $0207
+
   RTS
   
  
@@ -371,7 +385,7 @@ ReadController2Loop:
   .org $E000
 palette:
   .db $22,$29,$1A,$0F,  $22,$36,$17,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
-  .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$1C,$15,$14,  $37,$36,$38,$2D   ;;sprite palette
+  .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$10,$15,$07,  $37,$36,$38,$2D   ;;sprite palette
 
 sprites:
      ;vert tile attr horiz
