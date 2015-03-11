@@ -212,9 +212,9 @@ MoveBallRight:
   ADC ballspeedx        ;;ballx position = ballx + ballspeedx
   STA ballx
 
-  LDA ballx
-  CMP #RIGHTWALL
-  BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
+  ;;LDA ballx
+  ;;CMP #RIGHTWALL
+  ;;BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
   ;;LDA #$00
   ;;STA ballright
   ;;LDA #$01
@@ -231,9 +231,9 @@ MoveBallLeft:
   SBC ballspeedx        ;;ballx position = ballx - ballspeedx
   STA ballx
 
-  LDA ballx
-  CMP #LEFTWALL
-  BCS MoveBallLeftDone      ;;if ball x > left wall, still on screen, skip next section
+;;  LDA ballx
+;;  CMP #LEFTWALL
+;;  BCS MoveBallLeftDone      ;;if ball x > left wall, still on screen, skip next section
 ;;  LDA #$01
 ;;  STA ballright
 ;;  LDA #$00
