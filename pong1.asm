@@ -36,9 +36,12 @@ TOPWALL        = $20
 BOTTOMWALL     = $E0
 BOTTOMWALLOFFS = $D0
 LEFTWALL       = $04
+LEFTWALLOFFS   = $0A
   
 PADDLE1X       = $08  ; horizontal position for paddles, doesnt move
 PADDLE2X       = $F0
+
+PADDLE_LEN     = $04
 
 ;;;;;;;;;;;;;;;;;;
 
@@ -104,10 +107,10 @@ LoadPalettesLoop:
 
 
 ;;;Set some initial ball stats
-  LDA #$01
+  LDA #$00
   STA balldown
   STA ballright
-  LDA #$00
+  LDA #$01
   STA ballup
   STA ballleft
   
@@ -231,13 +234,6 @@ MoveBallLeft:
   SBC ballspeedx        ;;ballx position = ballx - ballspeedx
   STA ballx
 
-;;  LDA ballx
-;;  CMP #LEFTWALL
-;;  BCS MoveBallLeftDone      ;;if ball x > left wall, still on screen, skip next section
-;;  LDA #$01
-;;  STA ballright
-;;  LDA #$00
-;;  STA ballleft         ;;bounce, ball now moving right
   ;;in real game, give point to player 2, reset ball
 MoveBallLeftDone:
 
@@ -312,7 +308,24 @@ CheckPaddleCollision:
   ;;  if ball y > paddle y top
   ;;    if ball y < paddle y bottom
   ;;      bounce, ball now moving left
-  
+
+  LDA ballx
+  CMP #LEFTWALLOFFS
+  BCS CheckPaddleCollisionDone
+
+  LDA bally
+  CMP paddle1ytop
+  BCC CheckPaddleCollisionDone
+
+  LDA paddle1ytop
+  ADC #PADDLE_LEN
+  CMP bally
+  BCC CheckPaddleCollisionDone
+
+  LDA #$01
+  STA ballright
+  LDA #$00
+  STA ballleft         ;;bounce, ball now moving right
 CheckPaddleCollisionDone:
 
   JMP GameEngineDone
@@ -364,7 +377,7 @@ UpdateSprites:
   ADC #$08
   TAY
 
-  CPX #$04
+  CPX #PADDLE_LEN
   BNE .DrawPaddlePart
 
   RTS
