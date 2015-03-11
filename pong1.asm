@@ -41,7 +41,8 @@ LEFTWALLOFFS   = $0A
 PADDLE1X       = $08  ; horizontal position for paddles, doesnt move
 PADDLE2X       = $F0
 
-PADDLE_LEN     = $04
+PADDLE_LEN_SPR = $04
+PADDLE_LEN_PIXELS = $20
 
 BALL_Y_START_POS = $50
 BALL_X_START_POS = $80
@@ -347,7 +348,8 @@ CheckPaddleCollision:
 
   ;; Check if ball is below paddle
   LDA paddle1ytop
-  ADC #PADDLE_LEN
+  CLC
+  ADC #PADDLE_LEN_PIXELS
   CMP bally
   BCC CheckPaddleCollisionDone
 
@@ -408,7 +410,7 @@ UpdateSprites:
   ADC #$08
   TAY
 
-  CPX #PADDLE_LEN
+  CPX #PADDLE_LEN_SPR
   BNE .DrawPaddlePart
 
   RTS
