@@ -215,10 +215,10 @@ MoveBallRight:
   LDA ballx
   CMP #RIGHTWALL
   BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
-  LDA #$00
-  STA ballright
-  LDA #$01
-  STA ballleft         ;;bounce, ball now moving left
+  ;;LDA #$00
+  ;;STA ballright
+  ;;LDA #$01
+  ;;STA ballleft         ;;bounce, ball now moving left
   ;;in real game, give point to player 1, reset ball
 MoveBallRightDone:
 
@@ -234,10 +234,10 @@ MoveBallLeft:
   LDA ballx
   CMP #LEFTWALL
   BCS MoveBallLeftDone      ;;if ball x > left wall, still on screen, skip next section
-  LDA #$01
-  STA ballright
-  LDA #$00
-  STA ballleft         ;;bounce, ball now moving right
+;;  LDA #$01
+;;  STA ballright
+;;  LDA #$00
+;;  STA ballleft         ;;bounce, ball now moving right
   ;;in real game, give point to player 2, reset ball
 MoveBallLeftDone:
 
