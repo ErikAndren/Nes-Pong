@@ -43,10 +43,12 @@ PADDLE2X       = $F0
 
 PADDLE_LEN     = $04
 
+BALL_Y_START_POS = $50
+BALL_X_START_POS = $80
+
+
+
 ;;;;;;;;;;;;;;;;;;
-
-
-
 
   .bank 0
   .org $C000 
@@ -114,10 +116,10 @@ LoadPalettesLoop:
   STA ballup
   STA ballleft
   
-  LDA #$50
+  LDA #BALL_Y_START_POS
   STA bally
   
-  LDA #$80
+  LDA #BALL_X_START_POS
   STA ballx
   
   LDA #$01
@@ -215,14 +217,22 @@ MoveBallRight:
   ADC ballspeedx        ;;ballx position = ballx + ballspeedx
   STA ballx
 
-  ;;LDA ballx
-  ;;CMP #RIGHTWALL
-  ;;BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
-  ;;LDA #$00
-  ;;STA ballright
-  ;;LDA #$01
-  ;;STA ballleft         ;;bounce, ball now moving left
-  ;;in real game, give point to player 1, reset ball
+  CMP #RIGHTWALL
+  BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
+
+  INC score1 ;; Inc score
+  
+  ;; Reset ball state
+  LDA #BALL_Y_START_POS
+  STA bally
+  
+  LDA #BALL_X_START_POS
+  STA ballx
+
+  LDA #$00
+  STA ballright
+  LDA #$01
+  STA ballleft         ;; ball now moving left
 MoveBallRightDone:
 
 MoveBallLeft:
@@ -235,6 +245,22 @@ MoveBallLeft:
   STA ballx
 
   ;;in real game, give point to player 2, reset ball
+  CMP #LEFTWALL
+  BCS MoveBallLeftDone      
+
+  INC score2 ;; Inc player 2 score
+  
+  ;; Reset ball state
+  LDA #BALL_Y_START_POS
+  STA bally
+  
+  LDA #BALL_X_START_POS
+  STA ballx
+
+  LDA #$01
+  STA ballright
+  LDA #$00
+  STA ballleft         ;; ball now moving left
 MoveBallLeftDone:
 
 MoveBallUp:
@@ -378,6 +404,7 @@ UpdateSprites:
   INX
 
   TYA
+  CLC
   ADC #$08
   TAY
 
@@ -386,13 +413,10 @@ UpdateSprites:
 
   RTS
   
- 
 DrawScore:
   ;;draw score on screen using background tiles
   ;;or using many sprites
   RTS
- 
- 
  
 ReadController1:
   LDA #$01
@@ -421,13 +445,8 @@ ReadController2Loop:
   DEX
   BNE ReadController2Loop
   RTS  
-  
-  
-    
-        
+          
 ;;;;;;;;;;;;;;  
-  
-  
   
   .bank 1
   .org $E000
