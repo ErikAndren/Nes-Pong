@@ -324,17 +324,39 @@ UpdateSprites:
   STA $0203
   
   ;;update paddle sprites
-  LDA paddle1ytop  ;;update all ball sprite info
-  STA $0204
+  LDY paddle1ytop ;; load ball position and add paddle offset
+  LDX #$00
+  
+.DrawPaddlePart
+  TXA
+  ASL A
+  ASL A
+  TAX
+  TYA
+     
+  STA $0204, x ;; store position in sprite offset
   
   LDA #$86
-  STA $0205
+  STA $0205, x
   
   LDA #$02
-  STA $0206
+  STA $0206, x
    
   LDA PADDLE1X
-  STA $0207
+  STA $0207, x
+
+  TXA
+  ROR A
+  ROR A
+  TAX
+  INX
+
+  TYA
+  ADC #$08
+  TAY
+
+  CPX #$04
+  BNE .DrawPaddlePart
 
   RTS
   
