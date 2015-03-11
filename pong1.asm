@@ -34,6 +34,7 @@ STATEGAMEOVER  = $02  ; displaying game over screen
 RIGHTWALL      = $F4  ; when ball reaches one of these, do something
 TOPWALL        = $20
 BOTTOMWALL     = $E0
+BOTTOMWALLOFFS = $D0
 LEFTWALL       = $04
   
 PADDLE1X       = $08  ; horizontal position for paddles, doesnt move
@@ -298,13 +299,22 @@ MovePaddleUp:
   BCC MovePaddleUpDone ;; If so, skip
 
   DEC paddle1ytop ;; Decrement position
-    
 MovePaddleUpDone:
 
 MovePaddleDown:
   ;;if down button pressed
   ;;  if paddle bottom < bottom wall
   ;;    move paddle top and bottom down
+  LDA buttons1
+  AND #%00000100
+  BEQ MovePaddleDownDone ;; not pressed, skip
+
+  LDA paddle1ytop 
+  CMP #BOTTOMWALLOFFS ;; Check if we have hit top wall
+
+  BCS MovePaddleDownDone ;; If so, skip
+
+  INC paddle1ytop ;; Decrement position
 MovePaddleDownDone:
   
 CheckPaddleCollision:
