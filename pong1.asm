@@ -315,15 +315,15 @@ UpdateSprites:
   LDA #$75
   STA $0201
   
-  LDA #$00
+  LDA #$03
   STA $0202
-  
+   
   LDA ballx
   STA $0203
   
   ;;update paddle sprites
   RTS
- 
+  
  
 DrawScore:
   ;;draw score on screen using background tiles
@@ -371,7 +371,7 @@ ReadController2Loop:
   .org $E000
 palette:
   .db $22,$29,$1A,$0F,  $22,$36,$17,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
-  .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$1C,$15,$14,  $22,$02,$38,$3C   ;;sprite palette
+  .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$1C,$15,$14,  $37,$36,$38,$2D   ;;sprite palette
 
 sprites:
      ;vert tile attr horiz
