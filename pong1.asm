@@ -288,12 +288,15 @@ MoveBallDownDone:
 
 MovePaddleUp:
   ;;if up button pressed
+  LDA buttons1
+  AND #%00001000
+  BEQ MovePaddleUpDone
+
+  DEC paddle1ytop
+  
   ;;  if paddle top > top wall
   ;;    move paddle top and bottom up
   
-    
-
-
 MovePaddleUpDone:
 
 MovePaddleDown:
