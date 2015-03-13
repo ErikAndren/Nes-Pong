@@ -32,11 +32,13 @@ STATEPLAYING   = $01  ; move paddles/ball, check for collisions
 STATEGAMEOVER  = $02  ; displaying game over screen
   
 RIGHTWALL      = $F4  ; when ball reaches one of these, do something
+RIGHTWALLOFFS  = $EA
+
 TOPWALL        = $20
 BOTTOMWALL     = $E0
 BOTTOMWALLOFFS = $D0
 LEFTWALL       = $04
-LEFTWALLOFFS   = $0A
+LEFTWALLOFFS   = $10
   
 PADDLE1X       = $08  ; horizontal position for paddles, doesnt move
 PADDLE2X       = $F0
@@ -48,7 +50,7 @@ BALL_Y_START_POS = $50
 BALL_X_START_POS = $80
 
 
-
+s
 ;;;;;;;;;;;;;;;;;;
 
   .bank 0
@@ -245,7 +247,7 @@ MoveBallLeft:
   SBC ballspeedx        ;;ballx position = ballx - ballspeedx
   STA ballx
 
-  ;;in real game, give point to player 2, reset ball
+  ;; Give point to player 2, reset ball
   CMP #LEFTWALL
   BCS MoveBallLeftDone      
 
@@ -360,7 +362,7 @@ MovePaddle2Down:
   INC paddle2ytop ;; Decrement position
 MovePaddle2DownDone:
 	
-CheckPaddleCollision:
+CheckPaddle1Collision:
   ;;if ball x < paddle1x
   ;;  if ball y > paddle y top
   ;;    if ball y < paddle y bottom
@@ -368,26 +370,56 @@ CheckPaddleCollision:
   ;; Check if on paddle x position
   LDA ballx
   CMP #LEFTWALLOFFS
-  BCS CheckPaddleCollisionDone
+  BCS CheckPaddle1CollisionDone
 
   ;; Check if ball is above paddle
   LDA bally
   CMP paddle1ytop
-  BCC CheckPaddleCollisionDone
+  BCC CheckPaddle1CollisionDone
 
   ;; Check if ball is below paddle
   LDA paddle1ytop
   CLC
   ADC #PADDLE_LEN_PIXELS
   CMP bally
-  BCC CheckPaddleCollisionDone
+  BCC CheckPaddle1CollisionDone
 
   ;; Bounce, ball now moving right
   LDA #$01
   STA ballright
   LDA #$00
   STA ballleft         
-CheckPaddleCollisionDone:
+CheckPaddle1CollisionDone:
+
+CheckPaddle2Collision:
+  ;;if ball x < paddle1x
+  ;;  if ball y > paddle y top
+  ;;    if ball y < paddle y bottom
+  ;;      bounce, ball now moving left
+  ;; Check if on paddle x position
+  LDA ballx
+  CMP #RIGHTWALLOFFS
+  BCC CheckPaddle2CollisionDone
+
+  ;; Check if ball is above paddle
+  LDA bally
+  CMP paddle2ytop
+  BCC CheckPaddle2CollisionDone
+
+  ;; Check if ball is below paddle
+  LDA paddle2ytop
+  CLC
+  ADC #PADDLE_LEN_PIXELS
+  CMP bally
+  BCC CheckPaddle2CollisionDone
+
+  ;; Bounce, ball now moving left
+  LDA #$01
+  STA ballleft
+  LDA #$00
+  STA ballright         
+CheckPaddle2CollisionDone:
+	
   JMP GameEngineDone
 
 UpdateSprites:
