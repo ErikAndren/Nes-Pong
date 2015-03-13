@@ -300,42 +300,41 @@ MoveBallDown:
   STA ballup         ;;bounce, ball now moving down
 MoveBallDownDone:
 
-MovePaddleUp:
+MovePaddle1Up:
   ;;if up button pressed
   LDA buttons1
   AND #%00001000
-  BEQ MovePaddleUpDone ;; not pressed, skip
+  BEQ MovePaddle1UpDone ;; not pressed, skip
 
   LDA paddle1ytop 
   CMP #TOPWALL ;; Check if we have hit top wall
 
-  BCC MovePaddleUpDone ;; If so, skip
+  BCC MovePaddle1UpDone ;; If so, skip
 
-  DEC paddle1ytop ;; Decrement position
-MovePaddleUpDone:
+  DEC paddle1ytop ;; Decrement position	
+MovePaddle1UpDone:
 
-MovePaddleDown:
+MovePaddle1Down:
   ;;if down button pressed
   ;;  if paddle bottom < bottom wall
   ;;    move paddle top and bottom down
   LDA buttons1
   AND #%00000100
-  BEQ MovePaddleDownDone ;; not pressed, skip
+  BEQ MovePaddle1DownDone ;; not pressed, skip
 
   LDA paddle1ytop 
   CMP #BOTTOMWALLOFFS ;; Check if we have hit top wall
 
-  BCS MovePaddleDownDone ;; If so, skip
+  BCS MovePaddle1DownDone ;; If so, skip
 
   INC paddle1ytop ;; Decrement position
-MovePaddleDownDone:
+MovePaddle1DownDone:
   
 CheckPaddleCollision:
   ;;if ball x < paddle1x
   ;;  if ball y > paddle y top
   ;;    if ball y < paddle y bottom
   ;;      bounce, ball now moving left
-
   ;; Check if on paddle x position
   LDA ballx
   CMP #LEFTWALLOFFS
@@ -359,9 +358,8 @@ CheckPaddleCollision:
   LDA #$00
   STA ballleft         
 CheckPaddleCollisionDone:
-
   JMP GameEngineDone
-  
+
 UpdateSprites:
   LDA bally  ;; update all ball sprite info
   STA $0200
@@ -502,8 +500,6 @@ sprites:
   .db $80, $33, $00, $88   ;sprite 1
   .db $88, $34, $00, $80   ;sprite 2
   .db $88, $35, $00, $88   ;sprite 3
-
-
 
   .org $FFFA     ;first of the three vectors starts here
   .dw NMI        ;when an NMI happens (once per frame if enabled) the 
