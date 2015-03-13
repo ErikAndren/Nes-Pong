@@ -122,11 +122,21 @@ LoadScoreBackgroundLoop:
   CPX #$20              ; Compare X to hex $80, decimal 128 - copying 128 bytes
   BNE LoadScoreBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
                         ; if compare was equal to 128, keep going down
-
+	
   LDX #$00
   INY
-  CPY #$04
+  CPY #$03
   BNE LoadScoreBackgroundLoop
+
+  LDX #$00              ; start out at 0
+LoadWallBackgroundLoop:
+  LDA wallBackground        ; load data from address (background)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$20              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  BNE LoadWallBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+                        ; if compare was equal to 128, keep going down
+  
 	
   LDY #$00
   LDX #$00
@@ -605,6 +615,9 @@ scoreBackground:
 
 mainBackground:
   .db $25
+
+wallBackground:
+  .db $47
 	
 background:
   .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;row 1
