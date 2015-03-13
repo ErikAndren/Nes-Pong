@@ -19,7 +19,7 @@ ballright  .rs 1  ; 1 = ball moving right
 ballspeedx .rs 1  ; ball horizontal speed per frame
 ballspeedy .rs 1  ; ball vertical speed per frame
 paddle1ytop   .rs 1  ; player 1 paddle top vertical position
-paddle2ybot   .rs 1  ; player 2 paddle bottom vertical position
+paddle2ytop   .rs 1  ; player 2 paddle bottom vertical position
 buttons1   .rs 1  ; player 1 gamepad buttons, one bit per button
 buttons2   .rs 1  ; player 2 gamepad buttons, one bit per button
 score1     .rs 1  ; player 1 score, 0-15
@@ -130,7 +130,7 @@ LoadPalettesLoop:
 ;;; Set initial paddle state
   LDA #$80
   STA paddle1ytop
-  STA paddle2ybot
+  STA paddle2ytop
   	
 ;;:Set starting game state
   LDA #STATEPLAYING
@@ -375,11 +375,11 @@ UpdateSprites:
   LDA ballx
   STA $0203
   
-  ;;update paddle sprites
+  ;;update paddle 1 sprites
   LDY paddle1ytop ;; load ball position and add paddle offset
   LDX #$00
   
-.DrawPaddlePart
+.DrawPaddle1Part
   TXA
   CLC
   ;; Shift X two bits to the left
@@ -396,7 +396,7 @@ UpdateSprites:
   LDA #$02
   STA $0206, x
    
-  LDA PADDLE1X
+  LDA #PADDLE1X
   STA $0207, x
 
   TXA
@@ -412,7 +412,46 @@ UpdateSprites:
   TAY
 
   CPX #PADDLE_LEN_SPR
-  BNE .DrawPaddlePart
+  BNE .DrawPaddle1Part
+
+  ;;update paddle 2 sprites
+  LDY paddle2ytop ;; load ball position and add paddle offset
+  LDX #$00
+  
+.DrawPaddle2Part
+  TXA
+  CLC
+  ;; Shift X two bits to the left
+  ASL A
+  ASL A
+  TAX
+  TYA
+
+  STA $0214, x ;; store position in sprite offset
+
+  LDA #$86
+  STA $0215, x
+
+  LDA #$02
+  STA $0216, x
+
+  LDA #PADDLE2X
+  STA $0217, x
+
+  TXA
+  CLC
+  ROR A
+  ROR A
+  TAX
+  INX
+
+  TYA
+  CLC
+  ADC #$08
+  TAY
+
+  CPX #PADDLE_LEN_SPR
+  BNE .DrawPaddle2Part
 
   RTS
   
