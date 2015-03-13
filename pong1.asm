@@ -329,7 +329,37 @@ MovePaddle1Down:
 
   INC paddle1ytop ;; Decrement position
 MovePaddle1DownDone:
-  
+
+MovePaddle2Up:
+  ;;if up button pressed
+  LDA buttons2
+  AND #%00001000
+  BEQ MovePaddle2UpDone ;; not pressed, skip
+
+  LDA paddle2ytop 
+  CMP #TOPWALL ;; Check if we have hit top wall
+
+  BCC MovePaddle2UpDone ;; If so, skip
+
+  DEC paddle2ytop ;; Decrement position	
+MovePaddle2UpDone:
+
+MovePaddle2Down:
+  ;;if down button pressed
+  ;;  if paddle bottom < bottom wall
+  ;;    move paddle top and bottom down
+  LDA buttons2
+  AND #%00000100
+  BEQ MovePaddle2DownDone ;; not pressed, skip
+
+  LDA paddle2ytop 
+  CMP #BOTTOMWALLOFFS ;; Check if we have hit top wall
+
+  BCS MovePaddle2DownDone ;; If so, skip
+
+  INC paddle2ytop ;; Decrement position
+MovePaddle2DownDone:
+	
 CheckPaddleCollision:
   ;;if ball x < paddle1x
   ;;  if ball y > paddle y top
