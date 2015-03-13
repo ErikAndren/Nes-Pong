@@ -112,27 +112,35 @@ LoadBackground:
   STA $2006             ; write the high byte of $2000 address
   LDA #$00
   STA $2006             ; write the low byte of $2000 address
+	
   LDX #$00              ; start out at 0
+  LDY #$00
 LoadScoreBackgroundLoop:
   LDA scoreBackground        ; load data from address (background)
   STA $2007             ; write to PPU
   INX                   ; X = X + 1
-  CPX #$80              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  CPX #$20              ; Compare X to hex $80, decimal 128 - copying 128 bytes
   BNE LoadScoreBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
                         ; if compare was equal to 128, keep going down
+
+  LDX #$00
+  INY
+  CPY #$04
+  BNE LoadScoreBackgroundLoop
+	
   LDY #$00
   LDX #$00
 LoadBackgroundLoop:
   LDA mainBackground        ; load data from address (background)
   STA $2007             ; write to PPU
   INX                   ; X = X + 1
-  CPX #$D0              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  CPX #$20              ; Compare X to hex $80, decimal 128 - copying 128 bytes
   BNE LoadBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
                         ; if compare was equal to 128, keep going down
 
   LDX #$00
   INY
-  CPY #$04
+  CPY #$1A
   BNE LoadBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
                         ; if compare was equal to 128, keep going down
 	
