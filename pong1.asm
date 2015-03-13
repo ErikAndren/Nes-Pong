@@ -49,8 +49,6 @@ PADDLE_LEN_PIXELS = $20
 BALL_Y_START_POS = $50
 BALL_X_START_POS = $80
 
-
-s
 ;;;;;;;;;;;;;;;;;;
 
   .bank 0
@@ -89,7 +87,6 @@ vblankwait2:      ; Second wait for vblank, PPU is ready after this
   BIT $2002
   BPL vblankwait2
 
-
 LoadPalettes:
   LDA $2002             ; read PPU status to reset the high/low latch
   LDA #$3F
@@ -109,7 +106,38 @@ LoadPalettesLoop:
   BNE LoadPalettesLoop  ; Branch to LoadPalettesLoop if compare was Not Equal to zero
                         ; if compare was equal to 32, keep going down
 
+LoadBackground:
+  LDA $2002             ; read PPU status to reset the high/low latch
+  LDA #$20
+  STA $2006             ; write the high byte of $2000 address
+  LDA #$00
+  STA $2006             ; write the low byte of $2000 address
+  LDX #$00              ; start out at 0
+LoadScoreBackgroundLoop:
+  LDA scoreBackground        ; load data from address (background)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$80              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  BNE LoadScoreBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+                        ; if compare was equal to 128, keep going down
+  LDY #$00
+  LDX #$00
+LoadBackgroundLoop:
+  LDA mainBackground        ; load data from address (background)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$D0              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  BNE LoadBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+                        ; if compare was equal to 128, keep going down
 
+  LDX #$00
+  INY
+  CPY #$04
+  BNE LoadBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+                        ; if compare was equal to 128, keep going down
+	
+
+	
 
 ;;;Set some initial ball stats
   LDA #$00
@@ -141,7 +169,7 @@ LoadPalettesLoop:
   LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
   STA $2000
 
-  LDA #%00010110   ; enable sprites, disable background, no clipping on left side
+  LDA #%00011110   ; enable sprites, disable background, no clipping on left side
   STA $2001
 
 Forever:
@@ -158,7 +186,7 @@ NMI:
   ;;This is the PPU clean up section, so rendering the next frame starts properly.
   LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
   STA $2000
-  LDA #%00010110   ; enable sprites, disable background, no clipping on left side
+  LDA #%00011110   ; enable sprites, disable background, no clipping on left side
   STA $2001
   LDA #$00        ;;tell the ppu there is no background scrolling
   STA $2005
@@ -517,7 +545,8 @@ UpdateSprites:
   
 DrawScore:
   ;;draw score on screen using background tiles
-  ;;or using many sprites
+  
+
   RTS
  
 ReadController1:
@@ -562,6 +591,44 @@ sprites:
   .db $80, $33, $00, $88   ;sprite 1
   .db $88, $34, $00, $80   ;sprite 2
   .db $88, $35, $00, $88   ;sprite 3
+
+scoreBackground:
+  .db $24
+
+mainBackground:
+  .db $25
+	
+background:
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;row 1
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;all sky
+
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;row 2
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;all sky
+
+  .db $24,$24,$24,$24,$45,$45,$24,$24,$45,$45,$45,$45,$45,$45,$24,$24  ;;row 3
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$53,$54,$24,$24  ;;some brick tops
+
+  .db $24,$24,$24,$24,$47,$47,$24,$24,$47,$47,$47,$47,$47,$47,$24,$24  ;;row 4
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$55,$56,$24,$24  ;;brick bottoms
+
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;row 5
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;all sky
+
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;row 6
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24  ;;all sky
+
+  .db $24,$24,$24,$24,$45,$45,$24,$24,$45,$45,$45,$45,$45,$45,$24,$24  ;;row 7
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$53,$54,$24,$24  ;;some brick tops
+
+  .db $24,$24,$24,$24,$47,$47,$24,$24,$47,$47,$47,$47,$47,$47,$24,$24  ;;row 8
+  .db $24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$24,$55,$56,$24,$24  ;;brick bottoms
+
+	
+attribute:
+  .db %00000000, %00010000, %01010000, %00010000, %00000000, %00000000, %00000000, %00110000
+
+  .db $24,$24,$24,$24, $47,$47,$24,$24 ,$47,$47,$47,$47, $47,$47,$24,$24 ,$24,$24,$24,$24 ,$24,$24,$24,$24, $24,$24,$24,$24, $55,$56,$24,$24  ;;brick bottoms
+
 
   .org $FFFA     ;first of the three vectors starts here
   .dw NMI        ;when an NMI happens (once per frame if enabled) the 
