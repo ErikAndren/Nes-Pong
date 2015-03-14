@@ -25,7 +25,6 @@ buttons2   .rs 1  ; player 2 gamepad buttons, one bit per button
 score1     .rs 1  ; player 1 score, 0-15
 score2     .rs 1  ; player 2 score, 0-15
 
-
 ;; DECLARE SOME CONSTANTS HERE
 STATETITLE     = $00  ; displaying title screen
 STATEPLAYING   = $01  ; move paddles/ball, check for collisions
@@ -48,6 +47,8 @@ PADDLE_LEN_PIXELS = $20
 
 BALL_Y_START_POS = $50
 BALL_X_START_POS = $80
+
+BG_1 = $01
 
 ;;;;;;;;;;;;;;;;;;
 
@@ -569,17 +570,26 @@ DrawScore:
   STA $2006             ; write the high byte of $2000 address
   LDA #$22
   STA $2006             ; write the low byte of $2000 address
-
   LDX #$00              ; start out at 0
 
 ScorePlayer1BackgroundLoop:
-  LDA #$00     ; load data from address (background + the value in x)
-  STA $2007             ; write to PPU
-  INX                   ; X = X + 1
-  CPX #$03              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+  LDX scoreBackground
+  LDY score1
+  ;; Check if score equals or exceeds 10
+  CPY #10
+  BCC .NoDigit1
+  LDX #BG_1
+  TYA
+  CLC
+  SBC #$09
+  TAY
+  
+.NoDigit1
+  STX $2007             ; write to PPU
 
-  BNE ScorePlayer1BackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
-
+  ;; Store first digit
+  STY $2007
+  	
   ;; Draw player 2 score  
   LDA $2002             ; read PPU status to reset the high/low latch
   LDA #$20
