@@ -563,8 +563,40 @@ UpdateSprites:
   
 DrawScore:
   ;;draw score on screen using background tiles
-  
 
+  LDA $2002             ; read PPU status to reset the high/low latch
+  LDA #$20
+  STA $2006             ; write the high byte of $2000 address
+  LDA #$22
+  STA $2006             ; write the low byte of $2000 address
+
+  LDX #$00              ; start out at 0
+
+ScorePlayer1BackgroundLoop:
+  LDA #$00     ; load data from address (background + the value in x)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$03              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+
+  BNE ScorePlayer1BackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+
+  ;; Draw player 2 score  
+  LDA $2002             ; read PPU status to reset the high/low latch
+  LDA #$20
+  STA $2006             ; write the high byte of $2000 address
+  LDA #$3B
+  STA $2006             ; write the low byte of $2000 address
+
+  LDX #$00              ; start out at 0
+
+ScorePlayer2BackgroundLoop:
+  LDA #$00              ; load data from address (background + the value in x)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$03              ; Compare X to hex $80, decimal 128 - copying 128 bytes
+
+  BNE ScorePlayer2BackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+	
   RTS
  
 ReadController1:
