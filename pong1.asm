@@ -172,7 +172,7 @@ LoadBackgroundLoop:
 	
 
 	
-
+ResetGame:	
 ;;;Set some initial ball stats
   LDA #$00
   STA balldown
@@ -272,8 +272,21 @@ EngineGameOver:
   ;;  go to Title State
   ;;  turn screen on
   LDA #%00001110   ; disable sprites, enable background, no clipping on left side
-  STA $2001  
+  STA $2001
 
+  ;; Wait for start button press
+  LDA buttons1
+  AND #%00010000
+  BEQ .Player1StartCheckDone
+  JMP ResetGame
+
+.Player1StartCheckDone
+  LDA buttons2
+  AND #%00010000
+  BEQ .Player1StartCheckDone
+  JMP ResetGame
+
+	
   JMP GameEngineDone
  
 ;;;;;;;;;;;
