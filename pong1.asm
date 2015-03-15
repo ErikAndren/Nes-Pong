@@ -662,8 +662,10 @@ ReadController2Loop:
   .bank 1
   .org $E000
 palette:
-  .db $22,$29,$1A,$0F,  $23,$37,$18,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
-  .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$10,$15,$07,  $37,$36,$38,$2D   ;;sprite palette
+;;;   Palette 3        Palette 2        Palette 1        Palette 0
+;;;   Color 0, 1, 2, 3
+  .db $22,$29,$1A,$0F, $23,$37,$18,$0F, $22,$30,$21,$0F, $0C,$0C,$17,$0F   ;;background palette
+  .db $22,$1C,$15,$14, $22,$02,$38,$3C, $22,$10,$15,$07, $37,$36,$38,$2D   ;;sprite palette
 
 sprites:
      ;vert tile attr horiz
