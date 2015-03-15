@@ -271,6 +271,10 @@ EngineGameOver:
   ;;  load title screen
   ;;  go to Title State
   ;;  turn screen on
+
+  
+
+	
   LDA #%00001110   ; disable sprites, enable background, no clipping on left side
   STA $2001
 
@@ -283,10 +287,10 @@ EngineGameOver:
 .Player1StartCheckDone
   LDA buttons2
   AND #%00010000
-  BEQ .Player1StartCheckDone
+  BEQ .Player2StartCheckDone
   JMP ResetGame
 
-	
+.Player2StartCheckDone
   JMP GameEngineDone
  
 ;;;;;;;;;;;
