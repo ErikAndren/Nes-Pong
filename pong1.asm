@@ -191,6 +191,10 @@ LoadBackgroundLoop:
   STA ballspeedx
   STA ballspeedy
 
+  LDA #$0E
+  STA score1
+  STA score2
+
 ;;; Set initial paddle state
   LDA #$80
   STA paddle1ytop
@@ -203,7 +207,7 @@ LoadBackgroundLoop:
   LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
   STA $2000
 
-  LDA #%00011110   ; enable sprites, disable background, no clipping on left side
+  LDA #%00011110   ; enable sprites, enable background, no clipping on left side
   STA $2001
 
 Forever:
@@ -266,7 +270,10 @@ EngineGameOver:
   ;;  turn screen off
   ;;  load title screen
   ;;  go to Title State
-  ;;  turn screen on 
+  ;;  turn screen on
+  LDA #%00001110   ; disable sprites, enable background, no clipping on left side
+  STA $2001  
+
   JMP GameEngineDone
  
 ;;;;;;;;;;;
@@ -285,6 +292,14 @@ MoveBallRight:
   CMP #RIGHTWALL
   BCC MoveBallRightDone      ;;if ball x < right wall, still on screen, skip next section
 
+  LDA score1
+  CMP #$0F
+  BCC .IncScore
+	
+  LDA #STATEGAMEOVER
+  STA gamestate
+
+.IncScore
   INC score1 ;; Inc score
   
   ;; Reset ball state
@@ -313,6 +328,14 @@ MoveBallLeft:
   CMP #LEFTWALL
   BCS MoveBallLeftDone      
 
+  LDA score2
+  CMP #$0F
+  BCC .IncScore
+	
+  LDA #STATEGAMEOVER
+  STA gamestate
+
+.IncScore
   INC score2 ;; Inc player 2 score
   
   ;; Reset ball state
