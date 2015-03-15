@@ -169,9 +169,7 @@ LoadBackgroundLoop:
   CPY #$1A
   BNE LoadBackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
                         ; if compare was equal to 128, keep going down
-	
-
-	
+		
 ResetGame:	
 ;;;Set some initial ball stats
   LDA #$00
@@ -272,9 +270,23 @@ EngineGameOver:
   ;;  go to Title State
   ;;  turn screen on
 
-  
+;;;  Draw game over text
+  LDA $2002             ; read PPU status to reset the high/low latch
+  LDA #$21
+  STA $2006             ; write the high byte of $2000 address
+  LDA #$4B
+  STA $2006             ; write the low byte of $2000 address
 
-	
+  LDX #$00
+.DrawGameOverLine1
+  LDA endingMessageLine1, x
+  STA $2007
+
+  CLC
+  INX
+  CPX #$09
+  BCC .DrawGameOverLine1
+		
   LDA #%00001110   ; disable sprites, enable background, no clipping on left side
   STA $2001
 
@@ -619,12 +631,11 @@ UpdateSprites:
   
 DrawScore:
   ;;draw score on screen using background tiles
-
   LDA $2002             ; read PPU status to reset the high/low latch
   LDA #$20
-  STA $2006             ; write the high byte of $2000 address
+  STA $2006             ; write the high byte of $2022 address
   LDA #$22
-  STA $2006             ; write the low byte of $2000 address
+  STA $2006             ; write the low byte of $2022 address
 
   LDX scoreBackground
   LDY score1
@@ -722,6 +733,18 @@ mainBackground:
 
 wallBackground:
   .db $47
+
+endingMessageLine1:
+  .db $10, $0A, $16, $0E, $24, $18, $1F, $0E, $1B
+endingMessageLine2:	
+  .db $1A, $16, $0B, $23, $0F, $1C, $25, $01, $25, $21, $19, $18    
+
+;;; 273 267 279 271 293 281 288 271 284
+;;; 17  11   34  15  37  25  32  15  28
+;;; 11  0B   22  0F  25  19  20  0F  1C
+;;; 282 278 267 291 271 284 293 ??? 293 289 281 280
+;;;  26  22  11  35  15  28  37 ???  37  33  25  24
+;;;  1A  16  0B  23  0F  1C  25  01  25  21  19  18    
 	
 attribute:
   .db %00001000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000010
