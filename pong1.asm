@@ -684,7 +684,7 @@ wallBackground:
   .db $47
 	
 attribute:
-  .db %00001011, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+  .db %00001000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000010
 
   .org $FFFA     ;first of the three vectors starts here
   .dw NMI        ;when an NMI happens (once per frame if enabled) the 
