@@ -103,9 +103,24 @@ LoadPalettesLoop:
                           ; etc
   STA $2007             ; write to PPU
   INX                   ; X = X + 1
-  CPX #$20              ; Compare X to hex $10, decimal 16 - copying 16 bytes = 4 sprites
+  CPX #$20              
   BNE LoadPalettesLoop  ; Branch to LoadPalettesLoop if compare was Not Equal to zero
                         ; if compare was equal to 32, keep going down
+
+LoadAttribute:
+  LDA $2002             ; read PPU status to reset the high/low latch
+  LDA #$23
+  STA $2006             ; write the high byte of $23C0 address
+  LDA #$C0
+  STA $2006             ; write the low byte of $23C0 address
+  LDX #$00              ; start out at 0
+
+LoadAttributeLoop:
+  LDA attribute, x      ; load data from address (attribute + the value in x)
+  STA $2007             ; write to PPU
+  INX                   ; X = X + 1
+  CPX #$08              ; Compare X to hex $08, decimal 8 - copying 8 bytes
+  BNE LoadAttributeLoop	
 
 LoadBackground:
   LDA $2002             ; read PPU status to reset the high/low latch
@@ -647,7 +662,7 @@ ReadController2Loop:
   .bank 1
   .org $E000
 palette:
-  .db $22,$29,$1A,$0F,  $22,$36,$17,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
+  .db $22,$29,$1A,$0F,  $23,$37,$18,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
   .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$10,$15,$07,  $37,$36,$38,$2D   ;;sprite palette
 
 sprites:
@@ -667,10 +682,7 @@ wallBackground:
   .db $47
 	
 attribute:
-  .db %00000000, %00010000, %01010000, %00010000, %00000000, %00000000, %00000000, %00110000
-
-  .db $24,$24,$24,$24, $47,$47,$24,$24 ,$47,$47,$47,$47, $47,$47,$24,$24 ,$24,$24,$24,$24 ,$24,$24,$24,$24, $24,$24,$24,$24, $55,$56,$24,$24  ;;brick bottoms
-
+  .db %00001011, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 
   .org $FFFA     ;first of the three vectors starts here
   .dw NMI        ;when an NMI happens (once per frame if enabled) the 
