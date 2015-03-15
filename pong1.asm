@@ -582,9 +582,9 @@ DrawScore:
   SBC #$09
   TAY
   
-.NoDigit1
   STX $2007             ; write to PPU
 
+.NoDigit1
   ;; Store first digit
   STY $2007
   
