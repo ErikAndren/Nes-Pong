@@ -570,9 +570,7 @@ DrawScore:
   STA $2006             ; write the high byte of $2000 address
   LDA #$22
   STA $2006             ; write the low byte of $2000 address
-  LDX #$00              ; start out at 0
 
-ScorePlayer1BackgroundLoop:
   LDX scoreBackground
   LDY score1
   ;; Check if score equals or exceeds 10
@@ -589,23 +587,30 @@ ScorePlayer1BackgroundLoop:
 
   ;; Store first digit
   STY $2007
-  	
+  
   ;; Draw player 2 score  
   LDA $2002             ; read PPU status to reset the high/low latch
   LDA #$20
   STA $2006             ; write the high byte of $2000 address
-  LDA #$3B
+  LDA #$3C
   STA $2006             ; write the low byte of $2000 address
 
-  LDX #$00              ; start out at 0
+  LDX scoreBackground
+  LDY score2
+  ;; Check if score equals or exceeds 10
+  CPY #10
+  BCC .NoDigit2
+  LDX #BG_1
+  TYA
+  CLC
+  SBC #$09
+  TAY
+  
+.NoDigit2
+  STX $2007             ; write to PPU
 
-ScorePlayer2BackgroundLoop:
-  LDA #$00              ; load data from address (background + the value in x)
-  STA $2007             ; write to PPU
-  INX                   ; X = X + 1
-  CPX #$03              ; Compare X to hex $80, decimal 128 - copying 128 bytes
-
-  BNE ScorePlayer2BackgroundLoop  ; Branch to LoadBackgroundLoop if compare was Not Equal to zero
+  ;; Store first digit
+  STY $2007
 	
   RTS
  
